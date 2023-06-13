@@ -70,16 +70,6 @@ class Expr:
         raise ExpressionImplemError("Concrete expression types must define `.atoms()`")
 
 
-def mark_modal(cls):
-    setattr(cls, "_is_modal", True)
-    return cls
-
-
-def set_ag_idx(cls):
-    setattr(cls, "_has_agent_index", True)
-    return cls
-
-
 @dataclass
 class Atom(Expr):
     """Expr type for an atomic proposition.
@@ -103,15 +93,7 @@ class Atom(Expr):
         return [self]
 
 
-# --- Operator definers ----
-
-def mk_op(base: Type, class_name: str, rator: Optional[str] = None):
-    return make_dataclass(
-        class_name,
-        [('rator', str, field(default=rator or class_name, init=False))],
-        bases=(base,),
-        namespace={"__repr__": base.__repr__}
-    )
+# --- Operator definitions ----
 
 
 @dataclass
@@ -121,25 +103,12 @@ class UnaryOp(Expr):
 
     This should not be used directly, it is the "abstract" version rather.
     Use this to define actual unary operators via .define on the class itself
-
-    Example:
-        >>> Not = UnaryOp.define("Not", "¬")
-        ...
-        >>> Not(Atom('q')) # it is not the case that q
-        ...
     """
     rand: Expr
     rator: str = field(default=None, init=False)
 
     def __repr__(self):
-        return "{}{}".format(self.rator, repr(self.rand))
-
-    @classmethod
-    def define(cls, class_name: str, rator: Optional[str] = None) -> Callable[[Expr], "UnaryOp"]:
-        """Define a unary operator given the class name and the rator symbol.
-        If the rator sysmbol is not provided it defaults to the same string as the `class_name`
-        """
-        return mk_op(cls, class_name, rator)
+        return "{} {}".format(self.rator, repr(self.rand))
 
     def __len__(self):
         return 1 + len(self.rand)
@@ -149,36 +118,21 @@ class UnaryOp(Expr):
 
 
 @dataclass
-class _Not(UnaryOp):
-    rator: str = NEG
-
-
-@dataclass
 class AgentOperator(Expr):
     """Base for unary operators that are parametrized on an agent number/id.
     This wrap an ope-`rator` symbol string, and an ope-`rand` Expr plust the id of an agent
 
     This should not be used directly, it is the "abstract" version rather.
     Use this to define actual unary operators via .define on the class itself
-
-    Example:
-        >>> K = AgentOperator.define("K")
-        ...
-        >>> K(0,Atom('q')) # agent 0 knows that q
-        ...
     """
-    rator: str
     i: int
     rand: Expr
+    rator: str = field(default=None, init=False)
     is_modal: bool = field(init=False, default=True)  # agent operators are always modal
     has_agent_idx: bool = field(init=False, default=True)  # and index dependent
 
     def __repr__(self):
         return "{}_{} {}".format(self.rator, self.i, repr(self.rand))
-
-    @classmethod
-    def define(cls, class_name: str, rator: Optional[str] = None) -> Callable[[TAgent, Expr], "AgentOperator"]:
-        return mk_op(cls, class_name, rator)  # type: ignore
 
     def __len__(self):
         return 1 + len(self.rand)
@@ -194,23 +148,13 @@ class InfixBinOp(Expr):
 
     This should not be used directly, it is the "abstract" version rather.
     Use this to define actual unary operators via .define on the class itself
-
-    Example:
-        >>> And = InfixBinOp.define("And", "∧")
-        ...
-        >>> And(Atom('p'), ~Atom('q'))
-        ...
     """
-    rator: str
     l_rand: Expr
     r_rand: Expr
+    rator: str = field(default=None, init=False)
 
     def __repr__(self):
         return "({} {} {})".format(repr(self.l_rand), self.rator, repr(self.r_rand))
-
-    @classmethod
-    def define(cls, class_name: str, rator: Optional[str] = None) -> Callable[[Expr, Expr], "InfixBinOp"]:
-        return mk_op(cls, class_name, rator)  # type: ignore
 
     def __len__(self):
         return 1 + len(self.l_rand) + len(self.r_rand)
@@ -222,17 +166,54 @@ class InfixBinOp(Expr):
 # --- Operator Implementations ---
 
 
-Not = UnaryOp.define("Not", NEG)
-C = mark_modal(UnaryOp.define("C"))
-E = mark_modal(UnaryOp.define("E"))
+# Not = UnaryOp.define("Not", NEG)
 
-K = AgentOperator.define("K")
-M = AgentOperator.define("M")
+@dataclass(repr=False)
+class Not(UnaryOp):
+    rator: str = NEG
 
-And = InfixBinOp.define("And", AND)
-Or = InfixBinOp.define("Or", OR)
-Cond = InfixBinOp.define("Cond", COND)
-Bicond = InfixBinOp.define("Bicond", BICOND)
+
+@dataclass(repr=False)
+class And(InfixBinOp):
+    rator: str = AND
+
+
+@dataclass(repr=False)
+class Or(InfixBinOp):
+    rator: str = OR
+
+
+@dataclass(repr=False)
+class Cond(InfixBinOp):
+    rator: str = COND
+
+
+@dataclass(repr=False)
+class Bicond(InfixBinOp):
+    rator: str = BICOND
+
+
+@dataclass(repr=False)
+class C(UnaryOp):
+    rator: str = "C"
+    is_modal: bool = field(default=True, init=False)
+
+
+@dataclass(repr=False)
+class E(UnaryOp):
+    rator: str = "E"
+    is_modal: bool = field(default=True, init=False)
+
+
+@dataclass(repr=False)
+class K(AgentOperator):
+    rator: str = "K"
+
+
+@dataclass(repr=False)
+class M(AgentOperator):
+    rator: str = "M"
+
 
 # the following is trick to obtain atoms for quick tests by just
 # saying e.g. >>> P.q
