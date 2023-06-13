@@ -76,10 +76,10 @@ class Atom(Expr):
     This Simply wraps a string
 
     Examples:
-         >>> Atom('p') # it is the case that p
-         ...
-         >>> Atom('q') # it is the case that q
-         ...
+         >>> Atom('p') # it is the case that
+         p
+         >>> Atom('q') # it is the case that
+         q
     """
     symbol: str
 
@@ -102,7 +102,7 @@ class UnaryOp(Expr):
     This wrap an ope-`rator` symbol string, and an ope-`rand` Expr.
 
     This should not be used directly, it is the "abstract" version rather.
-    Use this to define actual unary operators via .define on the class itself
+    Use this to define actual unary operator by extending the class
     """
     rand: Expr
     rator: str = field(default=None, init=False)
@@ -123,7 +123,7 @@ class AgentOperator(Expr):
     This wrap an ope-`rator` symbol string, and an ope-`rand` Expr plust the id of an agent
 
     This should not be used directly, it is the "abstract" version rather.
-    Use this to define actual unary operators via .define on the class itself
+    Use this to define actual unary operators by extending the class
     """
     i: int
     rand: Expr
@@ -147,7 +147,7 @@ class InfixBinOp(Expr):
     This wrap an ope-`rator` symbol string, and 2 ope-`rand`s Expr (left `l_rand` and right `r_rand`)
 
     This should not be used directly, it is the "abstract" version rather.
-    Use this to define actual unary operators via .define on the class itself
+    Use this to define actual binary operators by extending the class
     """
     l_rand: Expr
     r_rand: Expr
