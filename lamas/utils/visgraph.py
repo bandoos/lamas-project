@@ -39,8 +39,8 @@ def mk_visjs(net,
     config = Config(width=750,
                     height=950,
                     directed=True,
+                    hierarchical=True,
                     physics=True,
-                    hierarchical=False,
                     # **kwargs
                     )
 
