@@ -19,7 +19,7 @@ TAgent = Union[str, int]
 
 # Expr: Type
 
-@dataclass
+@dataclass(frozen=True)
 class Expr:
     """Base class for logical expressions.
     This should not be used directly, rather it exposes the generic
@@ -70,7 +70,7 @@ class Expr:
         raise ExpressionImplemError("Concrete expression types must define `.atoms()`")
 
 
-@dataclass
+@dataclass(frozen=True)
 class Atom(Expr):
     """Expr type for an atomic proposition.
     This Simply wraps a string
@@ -96,7 +96,7 @@ class Atom(Expr):
 # --- Operator definitions ----
 
 
-@dataclass
+@dataclass(frozen=True)
 class UnaryOp(Expr):
     """Base for simple unary operators.
     This wrap an ope-`rator` symbol string, and an ope-`rand` Expr.
@@ -117,7 +117,7 @@ class UnaryOp(Expr):
         return self.rand.atoms()
 
 
-@dataclass
+@dataclass(frozen=True)
 class AgentOperator(Expr):
     """Base for unary operators that are parametrized on an agent number/id.
     This wrap an ope-`rator` symbol string, and an ope-`rand` Expr plust the id of an agent
@@ -141,7 +141,7 @@ class AgentOperator(Expr):
         return self.rand.atoms()
 
 
-@dataclass
+@dataclass(frozen=True)
 class InfixBinOp(Expr):
     """Base for infix binary operators.
     This wrap an ope-`rator` symbol string, and 2 ope-`rand`s Expr (left `l_rand` and right `r_rand`)
@@ -168,49 +168,49 @@ class InfixBinOp(Expr):
 
 # Not = UnaryOp.define("Not", NEG)
 
-@dataclass(repr=False)
+@dataclass(repr=False, frozen=True)
 class Not(UnaryOp):
     rator: str = NEG
 
 
-@dataclass(repr=False)
+@dataclass(repr=False, frozen=True)
 class And(InfixBinOp):
     rator: str = AND
 
 
-@dataclass(repr=False)
+@dataclass(repr=False, frozen=True)
 class Or(InfixBinOp):
     rator: str = OR
 
 
-@dataclass(repr=False)
+@dataclass(repr=False, frozen=True)
 class Cond(InfixBinOp):
     rator: str = COND
 
 
-@dataclass(repr=False)
+@dataclass(repr=False, frozen=True)
 class Bicond(InfixBinOp):
     rator: str = BICOND
 
 
-@dataclass(repr=False)
+@dataclass(repr=False, frozen=True)
 class C(UnaryOp):
     rator: str = "C"
     is_modal: bool = field(default=True, init=False)
 
 
-@dataclass(repr=False)
+@dataclass(repr=False, frozen=True)
 class E(UnaryOp):
     rator: str = "E"
     is_modal: bool = field(default=True, init=False)
 
 
-@dataclass(repr=False)
+@dataclass(repr=False, frozen=True)
 class K(AgentOperator):
     rator: str = "K"
 
 
-@dataclass(repr=False)
+@dataclass(repr=False, frozen=True)
 class M(AgentOperator):
     rator: str = "M"
 
