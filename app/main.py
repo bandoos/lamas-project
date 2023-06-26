@@ -18,7 +18,30 @@ You can navigate preferably using the sidebar on the left. The available pages a
 - `report` consult the pdf of the Project report <a href='/report'>goto</a>. 
 
 ## Introduction
-This project explores ....
+On this website, you can see information and implementation of our project on gossip networks and Epistemic logic for the Logical Aspects of Multi-agent Systems course of
+the Rijksuniversiteit Groningen. 
+ 
+This project was realized by Luca Bandelli and Yara Bikowski.
+
+We investigated the spread of information in a cyclic gossip network using various concepts of Epistemic logic. For this, 
+we made a report with the explanations of methods and simplifications that we use (see report page for more details). 
+This report also contains examples of how information would spread throughout a network. 
+This website includes Python program that displays the evolution of the gossip network based. 
+
+""")
+
+st.markdown(r"""
+We make use of the following 2 priciples from the system $KEC(m)$:
+
+- (R2): From $\varphi$ follows $K_i \varphi$
+- (A6): $E\varphi \leftrightarrow (K_1\varphi \land ... \land K_m\varphi)$
+
+From (A6) via a single Equivalence Elimination we get the rule we are looking for
+
+- $E\varphi \leftrightarrow (K_1\varphi \land ... \land K_m\varphi)$ (A6)
+- $(K_1\varphi \land ... \land K_m\varphi) \rightarrow E\varphi$  (EE:1)
+
+
 """, unsafe_allow_html=True)
 
 simple_g = gossip.create_cycle_graph(5)
@@ -29,21 +52,12 @@ simple_g.nodes[0]['kb'] |= {gossip.Atom('p'), gossip.K(0, gossip.Atom('p'))}
 # fig = gossip.simple_draw(simple_g, figsize=(7, 7))
 # st.pyplot(fig)
 
+st.markdown("""
+#### Example of cyclic gossip network 
+At t=0 only the first agent knows the secret $p$.
+""")
+
 mk_visjs(simple_g, [dat['kb'] for _, dat in simple_g.nodes(data=True)])
-
-st.markdown(
-    r"""
-## Epistemic logic
-    
-- (R2): From $\varphi$ follows $K_i \varphi$
-- (A6): $E\varphi \leftrightarrow (K_1\varphi \land ... \land K_m\varphi)$
-
-From (A6) via a single Equivalence Elimination we get the rule we are looking for
-
-- $E\varphi \leftrightarrow (K_1\varphi \land ... \land K_m\varphi)$ (A6)
-- $(K_1\varphi \land ... \land K_m\varphi) \rightarrow E\varphi$  (EE:1)
-"""
-)
 
 # \begin{itemize}
 # \item (R2):
