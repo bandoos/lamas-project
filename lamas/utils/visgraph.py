@@ -19,7 +19,7 @@ def mk_visjs(net,
 
     for node, data in net.nodes(data=True):
         nodes.append(Node(id=node,
-                          label=f'Agent-{node + 1}',
+                          label=f'Agent-{node}',
                           shape="circular"
                           ))
 
