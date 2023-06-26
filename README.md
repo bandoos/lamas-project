@@ -2,9 +2,18 @@
 
 Final Project Logical Aspects of Multi Agent Systems
 
-## Status
+# Installation
 
-THIS README HAS TO BE UPDATED
-HOLD ON for after presentation
+Create a virtual environment (Tested with python 3.10) and activate it
 
+install dependecies 
+
+`$ pip install -r requirements.txt`
+
+# Launch the program
+
+```
+export PYTHONPATH="."
+streamlit run app/main.py
+```
 
